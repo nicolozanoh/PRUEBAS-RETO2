@@ -70,10 +70,12 @@ def newCatalog(TLTr='ARRAY_LIST',TLAr='ARRAY_LIST',TLAl='ARRAY_LIST'):
     catalog['tracks'] = lt.newList(TLTr)
     catalog['artists'] = lt.newList(TLAr)
     catalog['albums'] = lt.newList(TLAl)
+    #catalog['gl'] = lt.newList(TLAl)
+
     """
     mapas
     """
-    catalog['genres'] = mp.newMap(60000,
+    catalog['genres'] = mp.newMap(87300,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapGenres)
@@ -193,6 +195,8 @@ def addAlbum(catalog, album):
 def addGenre(catalog, genre, artist):
     # 
     genre=genre.strip(" ").strip("'")
+    lt.addLast(catalog['gl'],genre)
+    
     if mp.contains(catalog['genres'],genre):
         ent=mp.get(catalog['genres'],genre)
         gen=me.getValue(ent)
@@ -222,6 +226,10 @@ def printGen(catalog):
 # Funciones para creacion de datos
 
 # Funciones de consulta
+
+""" def t(catalog):
+    #mesort.sort(catalog['tracks'],cmpTracksByPopularity)
+    return lt.size(catalog['gl']) """
 
 def trackSize(catalog):
     #mesort.sort(catalog['tracks'],cmpTracksByPopularity)
