@@ -195,7 +195,7 @@ def addAlbum(catalog, album):
 def addGenre(catalog, genre, artist):
     # 
     genre=genre.strip(" ").strip("'")
-    lt.addLast(catalog['gl'],genre)
+    #lt.addLast(catalog['gl'],genre)
     
     if mp.contains(catalog['genres'],genre):
         ent=mp.get(catalog['genres'],genre)
