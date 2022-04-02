@@ -52,13 +52,13 @@ def loadData(tamanoListaTracks,tamanoListaArtists,tamanoListaAlbums):
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- Cargar listado de albums")
-    print("3- Listar artistas mas populares")
-    print("4- Listar canciones más populares")
-    print("5- Cancion más popular de tu artista favorito")
-    print("6- Ordenar artistas por cantidad de seguidores")
-    print("7- Discografia de tu artista favorito")
-    print("8- Canciones con mayor distribución")
+    print("Requerimiento 1")
+    print("Requerimiento 2")
+    print("Requerimiento 3")
+    print("Requerimiento 4")
+    print("Requerimiento 5")
+    print("Requerimiento 6")
+    print("Requerimiento 7")
 
 catalog = None
 
@@ -130,10 +130,10 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
-        tipoListaTracks=input("Escriba ARRAY o SINGLE para elegir el tipo de lista de las canciones: ")
-        tipoListaArtists=input("Escriba ARRAY o SINGLE para elegir el tipo de lista de los artistas: ")
-        tipoListaAlbums=input("Escriba ARRAY o SINGLE para elegir el tipo de lista de los álbumes: ")
-        
+        tipoListaTracks=input("Escriba ARRAY o SINGLE para elegir el tipo de lista que usará: ")
+        tipoListaArtists=tipoListaTracks
+        tipoListaAlbums=tipoListaTracks
+
         if (tipoListaTracks=='SINGLE'):
             tipoListaTracks='SINGLE_LINKED_LIST'
         else:
@@ -151,10 +151,9 @@ while True:
 
         # Se crea el controlador asociado a la vista
         control = newController(tipoListaTracks, tipoListaArtists, tipoListaAlbums)
-
-        tamanoListaTracks=input("Escriba: small, 5pct, 10pct,20pct, 30pct, 50pct, 80pct o large dependiendo del tamaño de los datos que desea cargar para la lista de canciones:")
-        tamanoListaArtists=input("Escriba: small, 5pct, 10pct,20pct, 30pct, 50pct, 80pct o large dependiendo del tamaño de los datos que desea cargar para la lista de artistas:")
-        tamanoListaAlbums=input("Escriba: small, 5pct, 10pct,20pct, 30pct, 50pct, 80pct o large dependiendo del tamaño de los datos que desea cargar para la lista de álbumes:")
+        tamanoListaAlbums=input("Escriba: small, 5pct, 10pct,20pct, 30pct, 50pct, 80pct o large dependiendo del tamaño de los datos que desea cargar:")
+        tamanoListaTracks=tamanoListaAlbums
+        tamanoListaArtists=tamanoListaAlbums
 
         print("\n\nCargando información de los archivos .... \n")
 
@@ -180,85 +179,8 @@ while True:
               "Memoria [kB]: ", f"{dm:.3f}")
 
     elif int(inputs[0]) == 2:
-        pass
+        pp=input("popularidad de artistas a buscar")
+        print(controller.buscarArtistasPopularidad(control,pp))
 
-    elif int(inputs[0]) == 1:
-        ti=controller.getTime()
-        numTop = input('Ingrese el número de canciones que desea que se muestren en el TOP de canciones más populares:')
 
-        print("----------------- Iputs de requerimiento número 3-------------------")
-        print("TOP "+numTop+" canciones más populares\n")
-        print("----------------- Respuesta de requerimiento número 3-------------------")
-        print("Las primeras y últimas 3 canciones del TOP "+numTop +" son: \n" )
-        Top, pri, ult=controller.topCancionesMasPopulares(control,numTop)
-        printTopPrimerosUltimosTracks(pri,ult,Top)
-        tf = controller.getTime()
-        delta_time = controller.deltaTime(ti, tf)
-        print("=============TIEMPO DE      "+str(delta_time))
-        
-        
-        
-    elif int(inputs[0]) == 2:
-        anoin = input('Ingrese el limite inferior del año que quiere analizar: ')
-        anofin = input('Ingrese el limite superior del año que quiere analizar: ')
-        albumsDate = controller.albumsCrono(control, anoin, anofin)
-        print(printAlbumsCrono(albumsDate))
-
-    elif int(inputs[0]) == 3:
-        top = int(input("Escriba el top de artistas que desee respecto a su popularidad: "))
-        top_list = controller.sortArtistsReq(control, 1, top)
-        print(printsortArtistsTop(top_list))
-
-    elif int(inputs[0]) == 5:
-        art = str(input("Ingrese el nombre del artista del cual quiere conocer su cancion mas popular: "))
-        pais = str(input("Ingrese el nombre del pais (en mayusculas) en donde crea que sea mas popular: "))
-        print("_________________________________________________________________________________ \n")
-
-        sumaTracksart, sumaAlbumsart, miArtista = controller.AlbumsAndArtists(control, art, pais)
-
-        top_tracks = controller.sortTracksPopularity(control)
-        #print(top_tracks)
-        print(printAlbumsAndArtists(art, sumaTracksart, sumaAlbumsart, top_tracks, miArtista))
-
-        
-        
-    elif int(inputs[0]) == 6:
-        
-        AlgoritmoOrdenamiento=input("Escriba: merge, quick shell, insertion o selection dependiendo del algoritmo de ordenamiento que desee usar:")
-        listaOrdenada=controller.sortArtistsByFollowers(control, AlgoritmoOrdenamiento)
-        delta_time = f"{listaOrdenada[1]:.3f}"
-        listaO = listaOrdenada[0]
-        print("-----------\n-----------\n-----------")
-        print("Para", str(listaOrdenada[2]), "elementos, con ordenamiento",AlgoritmoOrdenamiento ,"delta tiempo:", str(delta_time))
-        print("-----------\n-----------\n-----------")
-
-    elif int(inputs[0]) == 7:
-        ti = controller.getTime()
-        artista=input("Escribe el nombre del artista para ver su discografía:")
-        print("-----Inputs Requerimiento 5--------")
-        print("Medidores de discografía de: "+artista+"\n\n")
-       
-        numA, numS, numC, listaDeAlbumbes, priAlb, ultAlb=controller.Requerimiento5(control,artista)
-        a=numA+ numS+ numC
-        print("-----Respuesta de Requerimiento 5--------")
-        print("Número de compilaciones: "+str(numC))
-        print("Número de sencillos: "+str(numS))
-        print("Número de álbumes: "+str(numA))
-        print("Número total de álbumes: "+str(a)+"\n")
-        print("----Detalles de los álbumes----\nLos 3 primeros y últimos álbumes del rango")
-
-        printRequerimiento5(priAlb,ultAlb)
-        tf = controller.getTime()
-        delta_time = controller.deltaTime(ti, tf)
-        print("=============TIEMPO DE      "+str(delta_time))
-
-    elif int(inputs[0]) == 8:
-        ti = controller.getTime()
-        fechaI=input("Seleccione el año inicial (en formato AAAA): ")
-        fechaF=input("Seleccione el año final (en formato AAAA): ")
-        nTop=input("Escriba cuantas canciones desea clasificar: ")
-        lista=controller.Requerimiento6(control,fechaI,fechaF,nTop)
-        printRequerimiento6(lista[0])
-        tf = controller.getTime()
-        delta_time = controller.deltaTime(ti, tf)
-        print("=============TIEMPO DE      "+str(delta_time))
+    

@@ -70,55 +70,55 @@ def newCatalog(TLTr='ARRAY_LIST',TLAr='ARRAY_LIST',TLAl='ARRAY_LIST'):
     catalog['tracks'] = lt.newList(TLTr)
     catalog['artists'] = lt.newList(TLAr)
     catalog['albums'] = lt.newList(TLAl)
-    #catalog['gl'] = lt.newList(TLAl)
+    catalog['gl'] = lt.newList(TLAl)
 
     """
     mapas
     """
-    catalog['genres'] = mp.newMap(87300,
+    catalog['genres'] = mp.newMap(2470,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapGenres)
 
-    """  catalog['years'] = mp.newMap(60000,
+    catalog['years'] = mp.newMap(100,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapYears)
 
-    catalog['popularityArtists'] = mp.newMap(60000,
+    catalog['popularityArtists'] = mp.newMap(110,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapPopularityArtists)
 
-    catalog['popularityTracks'] = mp.newMap(60000,
+    catalog['popularityTracks'] = mp.newMap(110,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapPopularityTracks)
 
-    catalog['artistsNames'] = mp.newMap(60000,
+    catalog['artistsNames'] = mp.newMap(56150,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapArtistsNames)
 
-    catalog['countriesTracks'] = mp.newMap(60000,
+    catalog['countriesTracks'] = mp.newMap(200,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapCountriesTracks)
 
-    catalog['idArtists'] = mp.newMap(60000,
+    catalog['idArtists'] = mp.newMap(56150,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapIdArtists)                               
 
-    catalog['idTracks'] = mp.newMap(60000,
+    catalog['idTracks'] = mp.newMap(102000,
                                    maptype=mtpe,
                                    loadfactor=lfct,
                                    comparefunction=compareMapIdTracks) 
 
-    catalog['idAlbums'] = mp.newMap(60000,
+    catalog['idAlbums'] = mp.newMap(75550,
                                    maptype=mtpe,
                                    loadfactor=lfct,
-                                   comparefunction=compareMapIdAlbums) """                         
+                                   comparefunction=compareMapIdAlbums)                         
 
     return catalog
 
@@ -128,22 +128,22 @@ def addTrack(catalog, track):
     #
     lt.addLast(catalog['tracks'], track)
      
-    """ popularity=float(track['popularity'])
+    popularity=float(track['popularity'])
     if mp.contains(catalog['popularityTracks'],popularity):
         ent=mp.get(catalog['popularityTracks'],popularity)
         popu=me.getValue(ent)
     else:
         popu=lt.newList('ARRAY_LIST')
         mp.put(catalog['popularityTracks'],popularity,popu)
-    lt.addLast(popu,track) """
+    lt.addLast(popu,track)
 
-    """ mp.put(catalog['idTracks'], track['id'], track) """
+    mp.put(catalog['idTracks'], track['id'], track)
     
-    """ if track['available_markets'] != "[]":
+    if track['available_markets'] != "[]":
         countries=track['available_markets'].strip('"[]"').split(",")
         for i in countries:
             i.strip(" ").strip("'")
-            addCountryTrack(catalog, i, track) """
+            addCountryTrack(catalog, i, track)
 
     return catalog
 
@@ -156,19 +156,19 @@ def addArtist(catalog, artist):
         for i in genres:
             addGenre(catalog, i, artist)
     
-    """ popularity=float(artist['artist_popularity'])
+    popularity=float(artist['artist_popularity'])
     if mp.contains(catalog['popularityArtists'],popularity):
         ent=mp.get(catalog['popularityArtists'],popularity)
         popu=me.getValue(ent)
     else:
         popu=lt.newList('ARRAY_LIST')
         mp.put(catalog['popularityArtists'],popularity,popu)
-    lt.addLast(popu,artist) """
+    lt.addLast(popu,artist)
     
 
-    """ mp.put(catalog['artistsNames'], artist['name'], artist)
+    mp.put(catalog['artistsNames'], artist['name'], artist)
 
-    mp.put(catalog['idArtists'], artist['id'], artist) """
+    mp.put(catalog['idArtists'], artist['id'], artist)
     
     return catalog
 
@@ -176,7 +176,7 @@ def addAlbum(catalog, album):
     # 
     lt.addLast(catalog['albums'], album)
 
-    """ if album['release_date_precision'] == "month":
+    if album['release_date_precision'] == "month":
         year=int("19"+album['release_date'][-2:])
     else:
         year=int(album['release_date'][0:4])
@@ -188,19 +188,20 @@ def addAlbum(catalog, album):
         mp.put(catalog['years'],year,ye)
     lt.addLast(ye,album) 
 
-    mp.put(catalog['idAlbums'], album['id'], album) """
+    mp.put(catalog['idAlbums'], album['id'], album)
 
     return catalog
 
 def addGenre(catalog, genre, artist):
     # 
     genre=genre.strip(" ").strip("'")
-    #lt.addLast(catalog['gl'],genre)
+    
     
     if mp.contains(catalog['genres'],genre):
         ent=mp.get(catalog['genres'],genre)
         gen=me.getValue(ent)
     else:
+        lt.addLast(catalog['gl'],genre)
         gen=lt.newList('ARRAY_LIST')
         mp.put(catalog['genres'],genre,gen)
     lt.addLast(gen,artist)
@@ -227,9 +228,7 @@ def printGen(catalog):
 
 # Funciones de consulta
 
-""" def t(catalog):
-    #mesort.sort(catalog['tracks'],cmpTracksByPopularity)
-    return lt.size(catalog['gl']) """
+
 
 def trackSize(catalog):
     #mesort.sort(catalog['tracks'],cmpTracksByPopularity)
@@ -262,14 +261,12 @@ def primerosUltimosDeLista(l, numero):
     return primeros, ultimos
 
 def buscarArtistasPopularidad(catalog, popularity):
-    
     popularity=float(popularity)
-    input(mp.get(catalog['popularityArtists'],popularity))
-    input("++\n++\n++\n++\n++\n")
     aa=mp.get(catalog['popularityArtists'],popularity)
     a=me.getValue(aa)
     input(a)
     return a
+
 
 
 # Funciones utilizadas para comparar elementos dentro de una lista

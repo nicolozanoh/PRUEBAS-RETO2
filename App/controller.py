@@ -68,7 +68,7 @@ def loadData(control,tamanoListaTracks,tamanoListaArtists,tamanoListaAlbums):
 
     dt = deltaTime(stop_time, start_time)
     dm = deltaMemory(stop_memory, start_memory)
-    #input(model.t(control['model']))
+    
     return tracks, artists, albums,dt,dm
 
 def loadTracks(catalog, tamano='small'):
@@ -117,6 +117,8 @@ def primerosUltimosTracks (control, numero):
 def primerosUltimosDeLista(l, numero):
     return model.primerosUltimosDeLista(l, numero)
 
+def buscarArtistasPopularidad(control,popularidad):
+    return model.buscarArtistasPopularidad(control['model'],popularidad)
 # Funciones para medir tiempos de ejecucion
 
 def getTime():
