@@ -30,7 +30,9 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+import DISClib.Algorithms.Sorting.mergesort as merge
 assert cf
+import datetime
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -57,15 +59,16 @@ def newCatalog(TLTr='ARRAY_LIST',TLAr='ARRAY_LIST',TLAl='ARRAY_LIST'):
                'popularityArtists': None,
                'popularityTracks': None,
                'artistsNames': None,
+               'albumsArtistsId': None,
+               'tracksAlbumsId': None,
                'countries': None,
                'idArtists': None,
                'idTracks': None,
                'idAlbum': None,
-               
                }
 
     """
-    lsitas
+    listas
     """
     catalog['tracks'] = lt.newList(TLTr)
     catalog['artists'] = lt.newList(TLAr)
@@ -105,6 +108,16 @@ def newCatalog(TLTr='ARRAY_LIST',TLAr='ARRAY_LIST',TLAl='ARRAY_LIST'):
                                    loadfactor=lfct,
                                    comparefunction=compareMapCountriesTracks)
 
+    catalog['albumsArtistsId'] = mp.newMap(56150,
+                                   maptype=mtpe,
+                                   loadfactor=lfct,
+                                   comparefunction=cmpMapalbumsArtistsId)
+
+    catalog['tracksAlbumsId'] = mp.newMap(75550,
+                                   maptype=mtpe,
+                                   loadfactor=lfct,
+                                   comparefunction=cmpMaptracksAlbumsId)
+
     catalog['idArtists'] = mp.newMap(56150,
                                    maptype=mtpe,
                                    loadfactor=lfct,
@@ -137,6 +150,15 @@ def addTrack(catalog, track):
         mp.put(catalog['popularityTracks'],popularity,popu)
     lt.addLast(popu,track)
 
+    if mp.contains(catalog['tracksAlbumsId'], track['album_id']):
+        trackAlbum = me.getValue(mp.get(catalog['tracksAlbumsId'],track['album_id']))
+
+    else:
+        trackAlbum = lt.newList('ARRAY_LIST')
+        mp.put(catalog['tracksAlbumsId'], track['album_id'], trackAlbum)
+    
+    lt.addLast(trackAlbum, track)
+
     mp.put(catalog['idTracks'], track['id'], track)
     
     if track['available_markets'] != "[]":
@@ -164,7 +186,6 @@ def addArtist(catalog, artist):
         popu=lt.newList('ARRAY_LIST')
         mp.put(catalog['popularityArtists'],popularity,popu)
     lt.addLast(popu,artist)
-    
 
     mp.put(catalog['artistsNames'], artist['name'], artist)
 
@@ -177,16 +198,32 @@ def addAlbum(catalog, album):
     lt.addLast(catalog['albums'], album)
 
     if album['release_date_precision'] == "month":
-        year=int("19"+album['release_date'][-2:])
-    else:
-        year=int(album['release_date'][0:4])
+        year=int(datetime.datetime.strptime(album['release_date'], '%b-%y').year)
+
+    elif album['release_date_precision'] == "year":
+        year=int(album['release_date'])
+
+    elif album['release_date_precision'] == "day":
+        year = int(datetime.datetime.strptime(album['release_date'], '%Y-%m-%d').year)
+
     if mp.contains(catalog['years'],year):
         ent=mp.get(catalog['years'],year)
         ye=me.getValue(ent)
+
     else:
         ye=lt.newList('ARRAY_LIST')
         mp.put(catalog['years'],year,ye)
-    lt.addLast(ye,album) 
+
+    lt.addLast(ye,album)
+
+    if mp.contains(catalog['albumsArtistsId'], album['artist_id']):
+        albumsArtist=me.getValue(mp.get(catalog['albumsArtistsId'],album['artist_id']))
+
+    else:
+        albumsArtist = lt.newList('ARRAY_LIST')
+        mp.put(catalog['albumsArtistsId'], album['artist_id'], albumsArtist)
+    
+    lt.addLast(albumsArtist, album)
 
     mp.put(catalog['idAlbums'], album['id'], album)
 
@@ -228,8 +265,6 @@ def printGen(catalog):
 
 # Funciones de consulta
 
-
-
 def trackSize(catalog):
     #mesort.sort(catalog['tracks'],cmpTracksByPopularity)
     return lt.size(catalog['tracks'])
@@ -267,7 +302,48 @@ def buscarArtistasPopularidad(catalog, popularity):
     input(a)
     return a
 
+def examinarAlbumesPeriodo(catalog, año):
+    albumesAnio = me.getValue(mp.get(catalog['years'],año))
+    callMergeSort(albumesAnio, cmpAlbumsByName)
 
+    return albumesAnio
+
+def encontrarDiscografiaArtista(catalog, nombre):
+    id = (me.getValue(mp.get(catalog['artistsNames'], nombre)))['id']
+    albumsArtist = me.getValue(mp.get(catalog['albumsArtistsId'], id))
+    callMergeSort(albumsArtist, cmpAlbumsByYearDESC)
+    cancionesPopulares = lt.newList('ARRAY_LIST')
+    posicion = 1
+
+    while posicion <= lt.size(albumsArtist):
+        album = lt.getElement(albumsArtist, posicion)
+        tipoAlbum = 0
+        tipoSencillo = 0
+        tipoCompilacion = 0
+
+        if album['album_type'] == 'album':
+            tipoAlbum +=1
+        if album['album_type'] == 'compilation':
+            tipoCompilacion +=1
+        if album['album_type'] == 'single':
+            tipoSencillo +=1
+        
+        cancionesAlbum = me.getValue(mp.get(catalog['tracksAlbumsId'], album['id']))
+
+        callMergeSort(cancionesAlbum, cmpTracks)
+
+        lt.addLast(cancionesPopulares, lt.getElement(cancionesAlbum, 1))
+        
+        posicion += 1
+    
+    return albumsArtist, cancionesPopulares, tipoAlbum, tipoSencillo, tipoCompilacion
+
+def encontrarCancionesPopularidad(catalog, popularidad):
+    canciones = me.getValue(mp.get(catalog['popularityTracks'], popularidad))
+
+    callMergeSort(canciones, cmpTracks2)
+
+    return canciones
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -388,8 +464,73 @@ def compareMapIdAlbums(id, entry):
     else:
         return -1
 
+def cmpMaptracksAlbumsId(id, entry):
+    identry = me.getKey(entry)
+    if (id == identry):
+        return 0
+    elif (id > identry):
+        return 1
+    else:
+        return -1
 
+def cmpMapalbumsArtistsId(id, entry):
+    identry = me.getKey(entry)
+    if (id == identry):
+        return 0
+    elif (id > identry):
+        return 1
+    else:
+        return -1
 
+def cmpAlbumsByName(album1, album2):
+    if album1['name'] < album2['name']:
+        return True
+    else:
+        return False
+
+def cmpAlbumsByYearDESC(album1, album2):
+    if album1['release_date_precision'] == 'day':
+        releaseYear1 = datetime.datetime.strptime(album1['release_date'], '%Y-%m-%d').year
+
+    elif album1['release_date_precision'] == 'year':
+        releaseYear1 = int(album1['release_date'])
+    
+    elif album1['release_date_precision'] == 'month':
+        releaseYear1 = datetime.datetime.strptime(album1['release_date'], '%b-%y').year
+    
+    if album2['release_date_precision'] == 'day':
+        releaseYear2 = datetime.datetime.strptime(album2['release_date'], '%Y-%m-%d').year
+
+    elif album2['release_date_precision'] == 'year':
+        releaseYear2 = int(album2['release_date'])
+
+    elif album2['release_date_precision'] == 'month':
+        releaseYear2 = datetime.datetime.strptime(album2['release_date'], '%b-%y').year
+        
+    if int(releaseYear1) >= int(releaseYear2):
+        return True
+    else:
+        return False
+
+def cmpTracks(track1, track2):
+    if float(track1['popularity']) > float(track2['popularity']):
+        return True
+    elif (float(track1['duration_ms']) > float(track2['duration_ms'])) and(float(track1['popularity']) == float(track2['popularity'])):
+        return True
+    elif ((track1['name']) > (track2['name']))and(float(track1['popularity']) == float(track2['popularity'])) and (float(track1['duration_ms']) == float(track2['duration_ms'])) and ((track1['name']) > (track2['name'])):
+        return True
+    else:
+        return False
+
+def cmpTracks2(track1, track2):
+    if (float(track1['duration_ms']) > float(track2['duration_ms'])) and(float(track1['popularity']) == float(track2['popularity'])):
+        return True
+    elif ((track1['name']) > (track2['name']))and(float(track1['popularity']) == float(track2['popularity'])) and (float(track1['duration_ms']) == float(track2['duration_ms'])) and ((track1['name']) > (track2['name'])):
+        return True
+    else:
+        return False
 
 # Funciones de ordenamiento
 
+def callMergeSort(lista, cmpfunction):
+    merge.sort(lista, cmpfunction)

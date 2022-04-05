@@ -119,7 +119,17 @@ def primerosUltimosDeLista(l, numero):
 
 def buscarArtistasPopularidad(control,popularidad):
     return model.buscarArtistasPopularidad(control['model'],popularidad)
-# Funciones para medir tiempos de ejecucion
+
+def examinarAlbumesPeriodo(control, año):
+    return model.examinarAlbumesPeriodo(control['model'], año)
+
+def encontrarDiscografiaArtista(control, nombre):
+    return model.encontrarDiscografiaArtista(control['model'], nombre)
+
+def encontrarCancionesPopularidad(control, popularidad):
+    return model.encontrarCancionesPopularidad(control['model'], popularidad)
+
+# Funciones para medir tiempos de ejecucions
 
 def getTime():
     """
@@ -158,3 +168,4 @@ def deltaMemory(stop_memory, start_memory):
     # de Byte -> kByte
     delta_memory = delta_memory/1024.0
     return delta_memory
+

@@ -52,13 +52,12 @@ def loadData(tamanoListaTracks,tamanoListaArtists,tamanoListaAlbums):
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("Requerimiento 1")
-    print("Requerimiento 2")
-    print("Requerimiento 3")
-    print("Requerimiento 4")
-    print("Requerimiento 5")
-    print("Requerimiento 6")
-    print("Requerimiento 7")
+    print("2- Requerimiento 1")
+    print("3- Requerimiento 2")
+    print("4- Requerimiento 3")
+    print("5- Requerimiento 4")
+    print("6- Requerimiento 5")
+    print("7- Requerimiento 6")
 
 catalog = None
 
@@ -116,13 +115,6 @@ def printPrimerosUltimosArtists(primeros, ultimos):
 
     return ""
 
-
-
-
-
-
-
-
 """
 Menu principal
 """
@@ -178,9 +170,34 @@ while True:
         print("Tiempo [ms]: ", f"{dt:.3f}", "||",
               "Memoria [kB]: ", f"{dm:.3f}")
 
-    elif int(inputs[0]) == 2:
-        pp=input("popularidad de artistas a buscar")
-        print(controller.buscarArtistasPopularidad(control,pp))
+    elif int(inputs) == 2:
+        print("Examinar los álbumes en un año de interés")
+        año = int(input('Digite el año que desea consultar'))
+        albumesAnio = controller.examinarAlbumesPeriodo(control, año)
+
+        priAlb,ultAlb = controller.primerosUltimosDeLista(albumesAnio,3)
+        print(printPrimerosUltimosAlbumes(priAlb,ultAlb))
+
+    elif int(inputs) == 4:
+        print("Encontrar las canciones por popularidad")
+        popularidad = int(input("Popularidad de las canciones"))
+        canciones = controller.encontrarCancionesPopularidad(control, popularidad)
+
+        priTrck,ultTrck = controller.primerosUltimosDeLista(canciones,3)
+        print(printPrimerosUltimosTracks(priTrck,ultTrck))
 
 
-    
+    elif int(inputs) == 6:
+        print("Encontrar la discografía de un artista")
+        nombre = input("Escriba el nombre del artista")
+
+        albumsArtist, cancionesPopulares, tipoAlbum, tipoSencillo, tipoCompilacion = controller.encontrarDiscografiaArtista(control, nombre)
+
+        priAlb,ultAlb = controller.primerosUltimosDeLista(albumsArtist,3)
+        print(printPrimerosUltimosAlbumes(priAlb,ultAlb))
+
+        priTrck,ultTrck = controller.primerosUltimosDeLista(cancionesPopulares,3)
+        print(printPrimerosUltimosTracks(priTrck,ultTrck))
+
+    elif int(inputs) == 0:
+        sys.exit(0)
