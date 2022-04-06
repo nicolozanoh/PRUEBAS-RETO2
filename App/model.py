@@ -281,7 +281,7 @@ def getUltimos(data, numero):
 
 def getDataPrint(req, catalog, primeros, ultimos = None, tipo = None):
     if req == 0:
-        pass
+        data = getDataLoad(primeros, ultimos, catalog, tipo)
     elif req ==1:
         data = getDataReq1(primeros, ultimos, catalog)
     elif req == 2:
@@ -296,15 +296,30 @@ def getDataPrint(req, catalog, primeros, ultimos = None, tipo = None):
         data = getDataReq6()
     return data
 
+def getDataLoad(primeros, ultimos, catalog, tipo):
+    dataPrint = lt.newList('ARRAY_LIST')
+    if tipo == 'ALBUMS':
+        getDataAlbums(primeros, catalog, dataPrint, 0)
+        if ultimos != None:
+            getDataAlbums(ultimos, catalog, dataPrint, 0)
+    
+    if tipo == 'ARTISTS':
+        getDataArtists(primeros, catalog, dataPrint, 0)
+        if ultimos != None:
+            getDataArtists(ultimos, catalog, dataPrint, 0)
+
+    if tipo == 'TRACKS':
+        getDataTracks(primeros, catalog, dataPrint, 0)
+        if ultimos != None:
+            getDataTracks(ultimos, catalog, dataPrint, 0)
+    
+    return dataPrint
+
 def getDataReq1(primeros, ultimos, catalog):
     dataPrint = lt.newList("ARRAY_LIST")
-    for i in primeros['elements']:
-        album = (i['name'], i['release_date'], i['album_type'], me.getValue(mp.get(catalog['idArtists'], i['artist_id']))['name'],i['total_tracks'])
-        lt.addLast(dataPrint, album)
-    
-    for j in ultimos['elements']:
-        album = (j['name'], j['release_date'], j['album_type'], me.getValue(mp.get(catalog['idArtists'], j['artist_id']))['name'],j['total_tracks'])
-        lt.addLast(dataPrint, album)
+    getDataAlbums(primeros, catalog, dataPrint, 1)
+    if ultimos != None:
+        getDataAlbums(ultimos, catalog, dataPrint, 1)
     
     return dataPrint
 
@@ -314,7 +329,7 @@ def getDataReq2():
 def getDataReq3(primeros, ultimos, catalog):
     dataPrint = lt.newList("ARRAY_LIST")
 
-    getDataTracks(ultimos, catalog, dataPrint, 3)
+    getDataTracks(primeros, catalog, dataPrint, 3)
    
     if ultimos != None:
         getDataTracks(ultimos, catalog, dataPrint, 3)
@@ -329,18 +344,12 @@ def getDataReq5(primeros, ultimos, catalog, tipo):
     dataPrint = lt.newList('ARRAY_LIST')
     
     if tipo == 'ALBUM':
-        dataPrint = lt.newList("ARRAY_LIST")
-        for i in primeros['elements']:
-            album = (i['release_date'], i['name'], i['total_tracks'], i['album_type'], me.getValue(mp.get(catalog['idArtists'], i['artist_id']))['name'])
-            lt.addLast(dataPrint, album)
-        
-        for j in ultimos['elements']:
-            album = (j['release_date'], j['name'], j['total_tracks'], j['album_type'], me.getValue(mp.get(catalog['idArtists'], j['artist_id']))['name'])
-            lt.addLast(dataPrint, album)
+        getDataAlbums(primeros, catalog, dataPrint, 5)
+        if ultimos != None:
+            getDataAlbums(ultimos, catalog, dataPrint, 5)
     
     elif tipo == 'TRACKS':
         getDataTracks(primeros, catalog, dataPrint, 5)
-
         if ultimos != None:
             getDataTracks(ultimos, catalog, dataPrint, 5)
         
@@ -365,6 +374,22 @@ def getArtistNames(catalog, codigos):
 
     return (((str(artistas).replace("[","")).replace("]",""))).replace("'","")
 
+def getDataAlbums(lista, catalog, dataPrint, req):
+    for i in lista['elements']:
+        if req == 0:
+            album= (i['name'], i['album_type'], ((str(i['available_markets']).replace("[","")).replace("]","")).replace("'",""), i['release_date'])
+        elif req == 1:
+            album = (i['name'], i['release_date'], i['album_type'], me.getValue(mp.get(catalog['idArtists'], i['artist_id']))['name'],i['total_tracks'])
+        elif req == 5:
+            album = (i['release_date'], i['name'], i['total_tracks'], i['album_type'], me.getValue(mp.get(catalog['idArtists'], i['artist_id']))['name'])
+        lt.addLast(dataPrint, album)
+
+def getDataArtists(lista, catalog, dataPrint, req):
+    if req == 0:
+        for i in lista['elements']:
+            artist =(i['name'], ((str(i['genres']).replace("[","")).replace("]","")).replace("'",""), i['artist_popularity'], i['followers'])
+            lt.addLast(dataPrint, artist)
+
 def getDataTracks(lista, catalog, dataPrint, req):
     for i in lista['elements']:
         str_artistas = getArtistNames(catalog, i['artists_id'])
@@ -374,8 +399,11 @@ def getDataTracks(lista, catalog, dataPrint, req):
             lyrics = i['lyrics'][:80] + "..."
         if req == 5:
             track = (me.getValue(mp.get(catalog['idAlbums'], i['album_id']))['name'], (i['name'], str_artistas, i['duration_ms'], i['popularity'],i['preview_url'], lyrics))
-        if req == 3:
+        elif req == 3:
             track = (i['name'], me.getValue(mp.get(catalog['idAlbums'], i['album_id']))['name'], str_artistas, i['popularity'], i['duration_ms'],i['href'], lyrics)
+        elif req == 0:
+            track = (i['name'], i['duration_ms'], i['track_number'], ((str(i['available_markets']).replace("[","")).replace("]","")).replace("'",""), str_artistas, i['popularity'], i['href'])
+        
         lt.addLast(dataPrint, track) 
 
 def trackSize(catalog):

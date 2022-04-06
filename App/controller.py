@@ -36,6 +36,13 @@ def newController(TLTr,TLAr,TLAl):
     """
     Crea una instancia del modelo
     """
+    if (TLTr==2):TLTr='SINGLE_LINKED'
+    else: TLTr='ARRAY_LIST'
+    if (TLAr==2):TLAr='SINGLE_LINKED'
+    else: TLAr='ARRAY_LIST'
+    if (TLAl==2): TLAl='SINGLE_LINKED'
+    else: TLAl='ARRAY_LIST' 
+
     control = {
         'model': None
     }
@@ -44,21 +51,29 @@ def newController(TLTr,TLAr,TLAl):
 
 # Funciones para la carga de datos
 
-def loadData(control,tamanoListaTracks,tamanoListaArtists,tamanoListaAlbums):
+def loadData(control,tamaño):
     """
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
     tracemalloc.start()
-
+    
     # toma de tiempo y memoria al inicio del proceso
     start_time = getTime()
     start_memory = getMemory()
 
+    if tamaño == 1: stamaño = 'small'
+    if tamaño == 2: stamaño = '10pct'
+    if tamaño == 3: stamaño = '20pct'
+    if tamaño == 4: stamaño = '30pct'
+    if tamaño == 5: stamaño = '50pct'
+    if tamaño == 6: stamaño = '80pct'
+    if tamaño == 7: stamaño = 'large'
+
     catalog = control['model']
-    tracks = loadTracks(catalog,tamanoListaTracks)
-    artists = loadArtists(catalog,tamanoListaArtists)
-    albums = loadAlbums(catalog,tamanoListaAlbums)
+    tracks = loadTracks(catalog,stamaño)
+    artists = loadArtists(catalog,stamaño)
+    albums = loadAlbums(catalog,stamaño)
     
     # toma de tiempo y memoria al final del proceso
     stop_memory = getMemory()

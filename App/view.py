@@ -41,11 +41,11 @@ def newController(TLTr,TLAr,TLAl):
     control = controller.newController(TLTr,TLAr,TLAl)
     return control
 
-def loadData(tamanoListaTracks,tamanoListaArtists,tamanoListaAlbums):
+def loadData(tamaño):
     """
     Solicita al controlador que cargue los datos en el modelo
     """
-    tracks, artists, albums,dt,dm = controller.loadData(control,tamanoListaTracks,tamanoListaArtists,tamanoListaAlbums)
+    tracks, artists, albums,dt,dm = controller.loadData(control,tamaño)
     
     return tracks, artists, albums,dt,dm
 
@@ -58,6 +58,22 @@ def printMenu():
     print("5- Requerimiento 4")
     print("6- Requerimiento 5")
     print("7- Requerimiento 6")
+
+def menuTamaños():
+    print("Escoga el tamaño del archivo para continuar:")
+    print("1- Small")
+    print("2- 5pct")
+    print("3- 10pct")
+    print("4- 20pct")
+    print("5- 30pct")
+    print("6- 50pct")
+    print("7- 80pct")
+    print("8- Large")
+
+def menuTipoLista():
+    print("Escoga el tipo de lista:")
+    print("1- Array List")
+    print("2- Single Linked List")
 
 catalog = None
 
@@ -136,50 +152,36 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs) == 1:
-        tipoListaTracks=input("Escriba ARRAY o SINGLE para elegir el tipo de lista que usará: ")
+        menuTamaños()
+        tamaño= int(input())
+        menuTipoLista()
+        tipoListaTracks = int(input())
         tipoListaArtists=tipoListaTracks
         tipoListaAlbums=tipoListaTracks
 
-        if (tipoListaTracks=='SINGLE'):
-            tipoListaTracks='SINGLE_LINKED_LIST'
-        else:
-            tipoListaTracks='ARRAY_LIST'
-
-        if (tipoListaArtists=='SINGLE'):
-            tipoListaArtists='SINGLE_LINKED_LIST'
-        else:
-            tipoListaArtists='ARRAY_LIST'
-
-        if (tipoListaAlbums=='SINGLE'):
-            tipoListaAlbums='SINGLE_LINKED_LIST'
-        else:   
-            tipoListaAlbums='ARRAY_LIST' 
-
         # Se crea el controlador asociado a la vista
         control = newController(tipoListaTracks, tipoListaArtists, tipoListaAlbums)
-        tamanoListaAlbums=input("Escriba: small, 5pct, 10pct,20pct, 30pct, 50pct, 80pct o large dependiendo del tamaño de los datos que desea cargar:")
-        tamanoListaTracks=tamanoListaAlbums
-        tamanoListaArtists=tamanoListaAlbums
 
         print("\n\nCargando información de los archivos .... \n")
 
-        tracks, artists, albums,dt,dm=loadData(tamanoListaTracks,tamanoListaArtists,tamanoListaAlbums)
+        tracks, artists, albums,dt,dm=loadData(tamaño)
         
-        priAlb,ultAlb = controller.primerosUltimosAlbumes(control,3)
-        priArt,ultArt = controller.primerosUltimosArtistas(control,3)
-        priTra,ultTra = controller.primerosUltimosTracks(control,3)
+        albumPrint = controller.getDataPrint(control['model']['albums'],control,0, 3, 3, 'ALBUMS')
+        artistsPrint = controller.getDataPrint(control['model']['artists'],control,0, 3, 3, 'ARTISTS')
+        tracksPrint = controller.getDataPrint(control['model']['tracks'],control,0, 3, 3, 'TRACKS')
 
-        print('-------------------------------------------------------------------------------------------------------------------------------------- ')
-        print("tracks ID count: "+ str(tracks))
-        print("astists ID count: "+ str(artists)) 
+        print('-' * 30 + ' ')
+        print("astists ID count: "+ str(artists))
         print("albums ID count: "+ str(albums))
-        print('-------------------------------------------------------------------------------------------------------------------------------------- ')
+        print("tracks ID count: "+ str(tracks))
+        print('-' * 30 + ' \n')
         
-        print(printPrimerosUltimosTracks(priTra,ultTra))
-        
-        print(printPrimerosUltimosArtists(priArt,ultArt))
-        
-        print(printPrimerosUltimosAlbumes(priAlb,ultAlb))
+        print("Los primeros y últimos 3 artistas cargados fueron: \n" )
+        printData(['NOMBRE','GENEROS', 'POPULARIDAD', 'SEGUIDORES'], artistsPrint['elements'])
+        print("Los primeros y últimos 3 álbumes cargados fueron: \n" )
+        printData(['NOMBRE','TIPO DEL ALBUM','MERCADOS', 'FECHA DE LANZAMIENTO'], albumPrint['elements'])
+        print("Las primeras y últimas 3 canciones cargadas fueron: \n" )
+        printData(['NOMBRE','DURACION','NUMERO DE LA CANCION','MERCADOS','ARTISTA(S)','POPULARIDAD', 'LINK REFERENCIA'], tracksPrint['elements'])
 
         print("Tiempo [ms]: ", f"{dt:.3f}", "||",
               "Memoria [kB]: ", f"{dm:.3f}")
