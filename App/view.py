@@ -61,6 +61,19 @@ def printMenu():
 
 catalog = None
 
+def printData(headers, data, col_width = [0]):
+    columns = len(headers)
+    table = Texttable()
+    table._max_width = 180
+    table._header = headers
+    table._row_size = columns
+    if col_width[0] != 0:
+        table.set_cols_width(col_width)
+    table.set_cols_align = (["l"] +["c"]*(columns-1))
+    table._rows = data
+    print(table.draw())
+
+
 def printPrimerosUltimosAlbumes(primeros, ultimos):
     
     table = Texttable()
@@ -184,9 +197,9 @@ while True:
         popularidad = int(input("Popularidad de las canciones"))
         canciones = controller.encontrarCancionesPopularidad(control, popularidad)
 
-        priTrck,ultTrck = controller.primerosUltimosDeLista(canciones,3)
-        print(printPrimerosUltimosTracks(priTrck,ultTrck))
-
+        dataPrint = controller.getDataPrint(canciones,control,3,3,3)
+        printData(['NOMBRE', 'ALBUM', 'ARTISTAS', 'POPULARIDAD', 'DURACION', 'ENLACE', 'LYRICS'], dataPrint)
+        
 
     elif int(inputs) == 6:
         print("Encontrar la discografía de un artista")
