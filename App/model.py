@@ -461,6 +461,7 @@ def encontrarDiscografiaArtista(catalog, nombre):
         tipoAlbum = 0
         tipoSencillo = 0
         tipoCompilacion = 0
+        totalAlbums = 0
 
         if album['album_type'] == 'album':
             tipoAlbum +=1
@@ -469,6 +470,8 @@ def encontrarDiscografiaArtista(catalog, nombre):
         if album['album_type'] == 'single':
             tipoSencillo +=1
         
+        totalAlbums += 1
+
         cancionesAlbum = me.getValue(mp.get(catalog['tracksAlbumsId'], album['id']))
 
         callMergeSort(cancionesAlbum, cmpTracks)
@@ -477,7 +480,7 @@ def encontrarDiscografiaArtista(catalog, nombre):
         
         posicion += 1
     
-    return albumsArtist, cancionesPopulares, tipoAlbum, tipoSencillo, tipoCompilacion
+    return albumsArtist, cancionesPopulares, tipoAlbum, tipoSencillo, tipoCompilacion, totalAlbums
 
 def encontrarCancionesPopularidad(catalog, popularidad):
     canciones = me.getValue(mp.get(catalog['popularityTracks'], popularidad))

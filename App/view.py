@@ -50,7 +50,7 @@ def loadData(tamaño):
     return tracks, artists, albums,dt,dm
 
 def printMenu():
-    print("Bienvenido")
+    print("\nBienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Requerimiento 1")
     print("3- Requerimiento 2")
@@ -60,7 +60,7 @@ def printMenu():
     print("7- Requerimiento 6")
 
 def menuTamaños():
-    print("Escoga el tamaño del archivo para continuar:")
+    print("\nEscoga el tamaño del archivo para continuar:")
     print("1- Small")
     print("2- 5pct")
     print("3- 10pct")
@@ -71,7 +71,7 @@ def menuTamaños():
     print("8- Large")
 
 def menuTipoLista():
-    print("Escoga el tipo de lista:")
+    print("\nEscoga el tipo de lista:")
     print("1- Array List")
     print("2- Single Linked List")
 
@@ -89,62 +89,6 @@ def printData(headers, data, col_width = [0]):
     table._rows = data
     print(table.draw())
 
-
-def printPrimerosUltimosAlbumes(primeros, ultimos):
-    
-    table = Texttable()
-    table.set_cols_align(["l","c","c","l"])
-    table.set_cols_valign(["t","t","t","t"])
-
-    print("Los primeros y últimos 3 álbumes cargados fueron: \n" )
-    table.add_row(['name','album_type','release_date','available_markets'])
-    
-    for i in lt.iterator(primeros):
-        table.add_row([i['name'],i['album_type'],i['release_date'],i['available_markets']])
-    
-    for i in lt.iterator(ultimos):
-        table.add_row([i['name'],i['album_type'],i['release_date'],i['available_markets']])
-    
-    print(table.draw())
-    return ""
-
-def printPrimerosUltimosTracks(primeros, ultimos):
-    table = Texttable()
-    table.set_cols_align(["l","c","c","l"])
-    table.set_cols_valign(["t","t","t","t"])
-    print("Las primeras y últimas 3 canciones cargadas fueron: \n" )
-
-    table.add_row(["name","duration_ms","track_number","available_markets"])
-    
-    for i in lt.iterator(primeros): 
-        table.add_row([i['name'],i['duration_ms'],i['track_number'],i['available_markets']])
-    
-    for i in lt.iterator(ultimos):
-        table.add_row([i['name'],i['duration_ms'],i['track_number'],i['available_markets']])
-       
-    print(table.draw())
-    
-    return ""
-
-def printPrimerosUltimosArtists(primeros, ultimos):
-    table = Texttable()
-    table.set_cols_align(["l","l","c","c"])
-    table.set_cols_valign(["t","t","t","t"])
-
-    table.add_row(["name",'genres','artist_popularity','followers'])
-
-    print("Las primeros y últimos 3 artistas cargados fueron: \n" )
-    
-    for i in lt.iterator(primeros):
-        table.add_row([i['name'],i['genres'],i['artist_popularity'],i['followers']])            
-        
-    for i in lt.iterator(ultimos):
-        table.add_row([i['name'],i['genres'],i['artist_popularity'],i['followers']])   
-
-    print(table.draw())
-
-    return ""
-
 """
 Menu principal
 """
@@ -159,7 +103,6 @@ while True:
         tipoListaArtists=tipoListaTracks
         tipoListaAlbums=tipoListaTracks
 
-        # Se crea el controlador asociado a la vista
         control = newController(tipoListaTracks, tipoListaArtists, tipoListaAlbums)
 
         print("\n\nCargando información de los archivos .... \n")
@@ -176,38 +119,54 @@ while True:
         print("tracks ID count: "+ str(tracks))
         print('-' * 30 + ' \n')
         
-        print("Los primeros y últimos 3 artistas cargados fueron: \n" )
+        print("\nLos primeros y últimos 3 artistas cargados fueron: " )
         printData(['NOMBRE','GENEROS', 'POPULARIDAD', 'SEGUIDORES'], artistsPrint['elements'])
-        print("Los primeros y últimos 3 álbumes cargados fueron: \n" )
+        print("\nLos primeros y últimos 3 álbumes cargados fueron: " )
         printData(['NOMBRE','TIPO DEL ALBUM','MERCADOS', 'FECHA DE LANZAMIENTO'], albumPrint['elements'])
-        print("Las primeras y últimas 3 canciones cargadas fueron: \n" )
+        print("\nLas primeras y últimas 3 canciones cargadas fueron: " )
         printData(['NOMBRE','DURACION','NUMERO DE LA CANCION','MERCADOS','ARTISTA(S)','POPULARIDAD', 'LINK REFERENCIA'], tracksPrint['elements'])
 
         print("Tiempo [ms]: ", f"{dt:.3f}", "||",
               "Memoria [kB]: ", f"{dm:.3f}")
 
     elif int(inputs) == 2:
-        print("Examinar los álbumes en un año de interés")
-        año = int(input('Digite el año que desea consultar'))
+        print("\nExaminar los álbumes en un año de interés\n")
+        print('='*30+' Req No. 1 Inputs '+'='*30)
+        año = int(input('Digite el año que desea consultar '))
+        print('\n'+'='*30+' Req No. 1 Answer '+'='*30)
         albumesAnio = controller.examinarAlbumesPeriodo(control, año)
+        print("Se lanzaron " + str(albumesAnio['size']) + " albumes en el " + str(año) + "\n")
+        print("Los primeros y últimos 3 albumes lanzados en "+ str(año) + " son: ")
 
         dataPrint = controller.getDataPrint(albumesAnio,control, 1, 3, 3)
         printData(['NOMBRE', 'FECHA DE LANZAMIENTO', 'TIPO DE ALBUM', 'ARTISTA', 'NUMERO DE CANCIONES'], dataPrint['elements'])
 
     elif int(inputs) == 4:
-        print("Encontrar las canciones por popularidad")
+        print("\nEncontrar las canciones por popularidad\n")
+        print('='*30+' Req No. 3 Inputs '+'='*30)
         popularidad = int(input("Popularidad de las canciones"))
+        print('\n'+'='*30+' Req No. 3 Answer '+'='*30)
         canciones = controller.encontrarCancionesPopularidad(control, popularidad)
+        print("Hay " + str(canciones['size']) + " con una popularidad de " + str(popularidad) + "\n")
+        print("Las primeras y últimas 3 canciones con popularidad de "+ str(popularidad) + " son: ")
 
         dataPrint = controller.getDataPrint(canciones,control,3,3,3)
         printData(['NOMBRE', 'ALBUM', 'ARTISTAS', 'POPULARIDAD', 'DURACION', 'ENLACE', 'LYRICS'], dataPrint['elements'])
         
 
     elif int(inputs) == 6:
-        print("Encontrar la discografía de un artista")
+        print("\nEncontrar la discografía de un artista\n")
+        print('='*30+' Req No. 5 Inputs '+'='*30)
         nombre = input("Escriba el nombre del artista")
+        print('\n'+'='*30+' Req No. 5 Answer '+'='*30)
 
-        albumsArtist, cancionesPopulares, tipoAlbum, tipoSencillo, tipoCompilacion = controller.encontrarDiscografiaArtista(control, nombre)
+        albumsArtist, cancionesPopulares, tipoAlbum, tipoSencillo, tipoCompilacion, totalAlbums = controller.encontrarDiscografiaArtista(control, nombre)
+
+        print("Numero de albumes tipo 'compilaciones': " + str(tipoCompilacion))
+        print("Numero de albumes tipo 'sencillos': " + str(tipoSencillo))
+        print("Numero de albumes tipo 'album': " + str(tipoAlbum))
+        print("Total de albumes: " + str(totalAlbums) + "\n")
+        print("Los primeros y últimos 3 albumes de "+ str(nombre) + " son: ")
 
         dataPrintAlbums = controller.getDataPrint(albumsArtist, control, 5, 3, 3, 'ALBUM')
         dataPrintTracks = controller.getDataPrint(cancionesPopulares, control, 5, 3, 3, 'TRACKS')
