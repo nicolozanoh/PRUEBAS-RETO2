@@ -129,7 +129,7 @@ def encontrarDiscografiaArtista(control, nombre):
 def encontrarCancionesPopularidad(control, popularidad):
     return model.encontrarCancionesPopularidad(control['model'], popularidad)
 
-def getDataPrint(lista, control,  req, numPrim, numUlt):
+def getDataPrint(lista, control,  req, numPrim, numUlt, tipo = None):
     primeros = None
     ultimos = None
     data = None
@@ -140,7 +140,7 @@ def getDataPrint(lista, control,  req, numPrim, numUlt):
         ultimos = model.getUltimos(lista, numUlt)
 
     if primeros != None or ultimos != None:
-        data =  model.getDataPrint(req, control['model'], primeros, ultimos = None, tipo = None)
+        data =  model.getDataPrint(req, control['model'], primeros, ultimos, tipo)
 
     return data
 

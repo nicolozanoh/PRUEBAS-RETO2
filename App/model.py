@@ -283,15 +283,15 @@ def getDataPrint(req, catalog, primeros, ultimos = None, tipo = None):
     if req ==1:
         data = getDataReq1(primeros, ultimos, catalog)
     elif req == 2:
-        data = getDataReq1()
+        data = getDataReq2()
     elif req == 3:
-        data = getDataReq1(primeros, ultimos, catalog)
+        data = getDataReq3(primeros, ultimos, catalog)
     elif req == 4:
-        data = getDataReq1()
+        data = getDataReq4()
     elif req == 5:
-        data = getDataReq1()
+        data = getDataReq5(primeros, ultimos, catalog, tipo)
     elif req == 6:
-        data = getDataReq1()
+        data = getDataReq6()
     return data
 
 def getDataReq1(primeros, ultimos, catalog):
@@ -320,7 +320,7 @@ def getDataReq3(primeros, ultimos, catalog):
         lista_art = cod_artistas.split(', ')
         
         for k in lista_art:
-            artist = me.getValue(mp.get(catalog['idArtists'], i[k]))
+            artist = me.getValue(mp.get(catalog['idArtists'], k))['name']
             if artist == None:
                 artist = ''
             artistas.append(artist)
@@ -334,30 +334,30 @@ def getDataReq3(primeros, ultimos, catalog):
 
         track = (i['name'], me.getValue(mp.get(catalog['idAlbums'], i['album_id']))['name'], str_artistas, i['popularity'], i['duration_ms'],i['href'], lyrics)
         lt.addLast(dataPrint, track)
+    if ultimos != None:
+        for j in ultimos['elements']:
+            artistas=[]
+            cod_artistas = str(j['artists_id'])
+            cod_artistas = cod_artistas.replace("[","")
+            cod_artistas = cod_artistas.replace("]","")
+            cod_artistas = cod_artistas.replace("'","")
+            lista_art = cod_artistas.split(', ')
+            
+            for k in lista_art:
+                artist = me.getValue(mp.get(catalog['idArtists'], k))['name']
+                if artist == None:
+                    artist = ''
+                artistas.append(artist)
+            
+            str_artistas = (((str(artistas).replace("[","")).replace("]",""))).replace("'","")
 
-    for j in ultimos['elements']:
-        artistas=[]
-        cod_artistas = str(j['artists_id'])
-        cod_artistas = cod_artistas.replace("[","")
-        cod_artistas = cod_artistas.replace("]","")
-        cod_artistas = cod_artistas.replace("'","")
-        lista_art = cod_artistas.split(', ')
-        
-        for k in lista_art:
-            artist = me.getValue(mp.get(catalog['idArtists'], j[k]))
-            if artist == None:
-                artist = ''
-            artistas.append(artist)
-        
-        str_artistas = (((str(artistas).replace("[","")).replace("]",""))).replace("'","")
+            if j['lyrics'] == '-99':
+                lyrics = 'Letra de la canción NO disponible'
+            else:
+                lyrics = j['lyrics'][:80] + "..."
 
-        if j['lyrics'] == '-99':
-            lyrics = 'Letra de la canción NO disponible'
-        else:
-            lyrics = j['lyrics'][:80] + "..."
-
-        track = (j['name'], me.getValue(mp.get(catalog['idAlbums'], j['album_id']))['name'], str_artistas, j['popularity'], j['duration_ms'],j['href'], lyrics)
-        lt.addLast(dataPrint, track)
+            track = (j['name'], me.getValue(mp.get(catalog['idAlbums'], j['album_id']))['name'], str_artistas, j['popularity'], j['duration_ms'],j['href'], lyrics)
+            lt.addLast(dataPrint, track)
 
     return dataPrint
 
@@ -388,7 +388,7 @@ def getDataReq5(primeros, ultimos, catalog, tipo):
             lista_art = cod_artistas.split(', ')
             
             for k in lista_art:
-                artist = me.getValue(mp.get(catalog['idArtists'], i[k]))
+                artist = me.getValue(mp.get(catalog['idArtists'], k))['name']
                 if artist == None:
                     artist = ''
                 artistas.append(artist)
@@ -404,6 +404,7 @@ def getDataReq5(primeros, ultimos, catalog, tipo):
 
             lt.addLast(dataPrint, track)
 
+        if ultimos != None:
             for j in ultimos['elements']:
                 artistas=[]
                 cod_artistas = str(j['artists_id'])
@@ -413,7 +414,7 @@ def getDataReq5(primeros, ultimos, catalog, tipo):
                 lista_art = cod_artistas.split(', ')
                 
                 for k in lista_art:
-                    artist = me.getValue(mp.get(catalog['idArtists'], j[k]))
+                    artist = me.getValue(mp.get(catalog['idArtists'], k))['name']
                     if artist == None:
                         artist = ''
                     artistas.append(artist)
@@ -427,7 +428,7 @@ def getDataReq5(primeros, ultimos, catalog, tipo):
 
                 track = (me.getValue(mp.get(catalog['idAlbums'], j['album_id']))['name'], (j['name'], str_artistas, j['duration_ms'], j['popularity'],j['preview_url'], lyrics))
                 lt.addLast(dataPrint, track)
-    
+        
     return dataPrint
 
 def getDataReq6():

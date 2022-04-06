@@ -189,8 +189,8 @@ while True:
         año = int(input('Digite el año que desea consultar'))
         albumesAnio = controller.examinarAlbumesPeriodo(control, año)
 
-        priAlb,ultAlb = controller.primerosUltimosDeLista(albumesAnio,3)
-        print(printPrimerosUltimosAlbumes(priAlb,ultAlb))
+        dataPrint = controller.getDataPrint(albumesAnio,control, 1, 3, 3)
+        printData(['NOMBRE', 'FECHA DE LANZAMIENTO', 'TIPO DE ALBUM', 'ARTISTA', 'NUMERO DE CANCIONES'], dataPrint['elements'])
 
     elif int(inputs) == 4:
         print("Encontrar las canciones por popularidad")
@@ -198,7 +198,7 @@ while True:
         canciones = controller.encontrarCancionesPopularidad(control, popularidad)
 
         dataPrint = controller.getDataPrint(canciones,control,3,3,3)
-        printData(['NOMBRE', 'ALBUM', 'ARTISTAS', 'POPULARIDAD', 'DURACION', 'ENLACE', 'LYRICS'], dataPrint)
+        printData(['NOMBRE', 'ALBUM', 'ARTISTAS', 'POPULARIDAD', 'DURACION', 'ENLACE', 'LYRICS'], dataPrint['elements'])
         
 
     elif int(inputs) == 6:
@@ -207,11 +207,15 @@ while True:
 
         albumsArtist, cancionesPopulares, tipoAlbum, tipoSencillo, tipoCompilacion = controller.encontrarDiscografiaArtista(control, nombre)
 
-        priAlb,ultAlb = controller.primerosUltimosDeLista(albumsArtist,3)
-        print(printPrimerosUltimosAlbumes(priAlb,ultAlb))
+        dataPrintAlbums = controller.getDataPrint(albumsArtist, control, 5, 3, 3, 'ALBUM')
+        dataPrintTracks = controller.getDataPrint(cancionesPopulares, control, 5, 3, 3, 'TRACKS')
 
-        priTrck,ultTrck = controller.primerosUltimosDeLista(cancionesPopulares,3)
-        print(printPrimerosUltimosTracks(priTrck,ultTrck))
+        printData(['FECHA DE LANZAMIENTO', 'NOMBRE','NUMERO DE CANCIONES', 'TIPO DE ALBUM', 'ARTISTA'], dataPrintAlbums['elements'])
+        
+        for cancion in dataPrintTracks['elements']:
+                print('\nCanción más popular en \'' + cancion[0]+ '\': ')
+                printData(['NOMBRE', 'ARTISTA(S))', 'DURACION', 'POPULARIDAD', 'PREVIEW ', 'LYRICS'], [cancion[1]], [15,15,15,15,15,15])
+
 
     elif int(inputs) == 0:
         sys.exit(0)
