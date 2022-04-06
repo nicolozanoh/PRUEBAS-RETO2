@@ -214,7 +214,7 @@ while True:
         
         for cancion in dataPrintTracks['elements']:
                 print('\nCanción más popular en \'' + cancion[0]+ '\': ')
-                printData(['NOMBRE', 'ARTISTA(S))', 'DURACION', 'POPULARIDAD', 'PREVIEW ', 'LYRICS'], [cancion[1]], [15,15,15,15,15,15])
+                printData(['NOMBRE', 'ARTISTA(S)', 'DURACION', 'POPULARIDAD', 'PREVIEW ', 'LYRICS'], [cancion[1]], [15,15,15,15,15,15])
 
 
     elif int(inputs) == 0:
