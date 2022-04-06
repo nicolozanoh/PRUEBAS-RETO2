@@ -69,6 +69,7 @@ def printPrimerosUltimosAlbumes(primeros, ultimos):
 
     print("Los primeros y últimos 3 álbumes cargados fueron: \n" )
     table.add_row(['name','album_type','release_date','available_markets'])
+    
     for i in lt.iterator(primeros):
         table.add_row([i['name'],i['album_type'],i['release_date'],i['available_markets']])
     
@@ -121,7 +122,7 @@ Menu principal
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
-    if int(inputs[0]) == 1:
+    if int(inputs) == 1:
         tipoListaTracks=input("Escriba ARRAY o SINGLE para elegir el tipo de lista que usará: ")
         tipoListaArtists=tipoListaTracks
         tipoListaAlbums=tipoListaTracks

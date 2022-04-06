@@ -265,6 +265,174 @@ def printGen(catalog):
 
 # Funciones de consulta
 
+def getPrimeros(data, numero):
+    lista = lt.newList('ARRAY_LIST')
+    for i in range(1, numero+1):
+        lt.addLast(lista, (lt.getElement(data, i)))
+    
+    return lista
+
+def getUltimos(data, numero):
+    numero = numero -1
+    lista = lt.newList('ARRAY_LIST')
+    for i in range(numero, -1, -1):
+        lt.addLast(lista, (lt.getElement(data, int(lt.size(data))-i)))
+    return lista
+
+def getDataPrint(req, catalog, primeros, ultimos = None, tipo = None):
+    if req ==1:
+        data = getDataReq1(primeros, ultimos, catalog)
+    elif req == 2:
+        data = getDataReq1()
+    elif req == 3:
+        data = getDataReq1(primeros, ultimos, catalog)
+    elif req == 4:
+        data = getDataReq1()
+    elif req == 5:
+        data = getDataReq1()
+    elif req == 6:
+        data = getDataReq1()
+    return data
+
+def getDataReq1(primeros, ultimos, catalog):
+    dataPrint = lt.newList("ARRAY_LIST")
+    for i in primeros['elements']:
+        album = (i['name'], i['release_date'], i['album_type'], me.getValue(mp.get(catalog['idArtists'], i['artist_id']))['name'],i['total_tracks'])
+        lt.addLast(dataPrint, album)
+    
+    for j in ultimos['elements']:
+        album = (j['name'], j['release_date'], j['album_type'], me.getValue(mp.get(catalog['idArtists'], j['artist_id']))['name'],j['total_tracks'])
+        lt.addLast(dataPrint, album)
+    
+    return dataPrint
+
+def getDataReq2():
+    pass
+
+def getDataReq3(primeros, ultimos, catalog):
+    dataPrint = lt.newList("ARRAY_LIST")
+    for i in primeros['elements']:
+        artistas=[]
+        cod_artistas = str(i['artists_id'])
+        cod_artistas = cod_artistas.replace("[","")
+        cod_artistas = cod_artistas.replace("]","")
+        cod_artistas = cod_artistas.replace("'","")
+        lista_art = cod_artistas.split(', ')
+        
+        for k in lista_art:
+            artist = me.getValue(mp.get(catalog['idArtists'], i[k]))
+            if artist == None:
+                artist = ''
+            artistas.append(artist)
+        
+        str_artistas = (((str(artistas).replace("[","")).replace("]",""))).replace("'","")
+
+        if i['lyrics'] == '-99':
+            lyrics = 'Letra de la canción NO disponible'
+        else:
+            lyrics = i['lyrics'][:80] + "..."
+
+        track = (i['name'], me.getValue(mp.get(catalog['idAlbums'], i['album_id']))['name'], str_artistas, i['popularity'], i['duration_ms'],i['href'], lyrics)
+        lt.addLast(dataPrint, track)
+
+    for j in ultimos['elements']:
+        artistas=[]
+        cod_artistas = str(j['artists_id'])
+        cod_artistas = cod_artistas.replace("[","")
+        cod_artistas = cod_artistas.replace("]","")
+        cod_artistas = cod_artistas.replace("'","")
+        lista_art = cod_artistas.split(', ')
+        
+        for k in lista_art:
+            artist = me.getValue(mp.get(catalog['idArtists'], j[k]))
+            if artist == None:
+                artist = ''
+            artistas.append(artist)
+        
+        str_artistas = (((str(artistas).replace("[","")).replace("]",""))).replace("'","")
+
+        if j['lyrics'] == '-99':
+            lyrics = 'Letra de la canción NO disponible'
+        else:
+            lyrics = j['lyrics'][:80] + "..."
+
+        track = (j['name'], me.getValue(mp.get(catalog['idAlbums'], j['album_id']))['name'], str_artistas, j['popularity'], j['duration_ms'],j['href'], lyrics)
+        lt.addLast(dataPrint, track)
+
+    return dataPrint
+
+def getDataReq4():
+    pass
+
+def getDataReq5(primeros, ultimos, catalog, tipo):
+    
+    dataPrint = lt.newList('ARRAY_LIST')
+    
+    if tipo == 'ALBUM':
+        dataPrint = lt.newList("ARRAY_LIST")
+        for i in primeros['elements']:
+            album = (i['release_date'], i['name'], i['total_tracks'], i['album_type'], me.getValue(mp.get(catalog['idArtists'], i['artist_id']))['name'])
+            lt.addLast(dataPrint, album)
+        
+        for j in ultimos['elements']:
+            album = (j['release_date'], j['name'], j['total_tracks'], j['album_type'], me.getValue(mp.get(catalog['idArtists'], j['artist_id']))['name'])
+            lt.addLast(dataPrint, album)
+    
+    elif tipo == 'TRACKS':
+        for i in primeros['elements']:
+            artistas=[]
+            cod_artistas = str(i['artists_id'])
+            cod_artistas = cod_artistas.replace("[","")
+            cod_artistas = cod_artistas.replace("]","")
+            cod_artistas = cod_artistas.replace("'","")
+            lista_art = cod_artistas.split(', ')
+            
+            for k in lista_art:
+                artist = me.getValue(mp.get(catalog['idArtists'], i[k]))
+                if artist == None:
+                    artist = ''
+                artistas.append(artist)
+            
+            str_artistas = (((str(artistas).replace("[","")).replace("]",""))).replace("'","")
+
+            if i['lyrics'] == '-99':
+                lyrics = 'Letra de la canción NO disponible'
+            else:
+                lyrics = i['lyrics'][:80] + "..."
+
+            track = (me.getValue(mp.get(catalog['idAlbums'], i['album_id']))['name'], (i['name'], str_artistas, i['duration_ms'], i['popularity'],i['preview_url'], lyrics))
+
+            lt.addLast(dataPrint, track)
+
+            for j in ultimos['elements']:
+                artistas=[]
+                cod_artistas = str(j['artists_id'])
+                cod_artistas = cod_artistas.replace("[","")
+                cod_artistas = cod_artistas.replace("]","")
+                cod_artistas = cod_artistas.replace("'","")
+                lista_art = cod_artistas.split(', ')
+                
+                for k in lista_art:
+                    artist = me.getValue(mp.get(catalog['idArtists'], j[k]))
+                    if artist == None:
+                        artist = ''
+                    artistas.append(artist)
+                
+                str_artistas = (((str(artistas).replace("[","")).replace("]",""))).replace("'","")
+
+                if j['lyrics'] == '-99':
+                    lyrics = 'Letra de la canción NO disponible'
+                else:
+                    lyrics = j['lyrics'][:80] + "..."
+
+                track = (me.getValue(mp.get(catalog['idAlbums'], j['album_id']))['name'], (j['name'], str_artistas, j['duration_ms'], j['popularity'],j['preview_url'], lyrics))
+                lt.addLast(dataPrint, track)
+    
+    return dataPrint
+
+def getDataReq6():
+    pass
+
 def trackSize(catalog):
     #mesort.sort(catalog['tracks'],cmpTracksByPopularity)
     return lt.size(catalog['tracks'])

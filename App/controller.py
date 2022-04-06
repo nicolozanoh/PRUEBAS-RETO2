@@ -129,6 +129,21 @@ def encontrarDiscografiaArtista(control, nombre):
 def encontrarCancionesPopularidad(control, popularidad):
     return model.encontrarCancionesPopularidad(control['model'], popularidad)
 
+def getDataPrint(lista, control,  req, numPrim, numUlt):
+    primeros = None
+    ultimos = None
+    data = None
+    if numPrim != -1:
+        primeros = model.getPrimeros(lista, numPrim)
+    
+    if numUlt != -1:
+        ultimos = model.getUltimos(lista, numUlt)
+
+    if primeros != None or ultimos != None:
+        data =  model.getDataPrint(req, control['model'], primeros, ultimos = None, tipo = None)
+
+    return data
+
 # Funciones para medir tiempos de ejecucions
 
 def getTime():
